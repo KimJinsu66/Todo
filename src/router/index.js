@@ -6,9 +6,8 @@ import NewEmployee from '@/components/Employee/NewEmployee'
 import ViewEmployee from '@/components/Employee/ViewEmployee'
 import EditEmployee from '@/components/Employee/EditEmployee'
 
-import TodoPage from '@/components/TodoPage'
-import TodoDetail from '@/components/TodoDetail'
-
+import TodoShow from '@/components/todo/TodoShow'
+import TodoIndex from '@/components/todo/TodoIndex'
 
 Vue.use(Router)
 
@@ -21,13 +20,14 @@ export default new Router({
         },
         {
             path: '/',
-            name: 'TodoPage',
-            component: TodoPage
+            name: "Todo",
+            component: TodoIndex
         },
+
         {
             path: '/:todo_id',
-            name: 'todo-detail',
-            component: TodoDetail
+            name: 'todo-show',
+            component: TodoShow
         },
         {
             path: '/dashboard',
