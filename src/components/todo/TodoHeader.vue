@@ -1,5 +1,6 @@
 <template>
-  <div class="todo-container text-center">
+  <div class="text-center">
+  
     <div class="my-3">
       <div class="input-group mb-3">
         <span class="input-group-text input-group-box" id="inputGroup-sizing-default">Content</span>
@@ -46,13 +47,25 @@
     methods: {
       async createTodo () {
         console.log("TOdo Header created in");
+        const content = this.content;
         
+        if ( this.checkEmptyContent(this.content) ) {
+          alert("할일을 입력하세요.");
+          return
+        }
+
         const data  = this.setData(this.content, 
                                    this.convertDateTime(this.startDate),
                                    this.convertDateTime(this.endDate)
                                   );
         this.$emit('createTodo', data);
         console.log("Todo Header Creadeted end");
+      },
+
+      checkEmptyContent(content) {
+        const checkedContent = content == "" || content == null || content == undefined || 
+             ( content != null && typeof content == "object" && !Object.keys(content).length );
+        return checkedContent;
       },
 
       convertDateTime (dateTime) {
