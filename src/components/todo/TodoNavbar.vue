@@ -2,7 +2,7 @@
   <div class="todo-navbar px-5">
     <div class="todo-navbar-inner-box d-flex justify-content-between">
       <div class="left-menu-box">
-        <button class="navbar-btn">  
+        <button class="navbar-btn" @click="sendShowData">  
           <i class="fas fa-bars font svg-font"></i>
         </button>
         
@@ -48,19 +48,31 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      searchKey: null,
+  import EventBus from '../common/eventBus.js'
+  export default {
+    data () {
+      return {
+        searchKey: null,
+        show: true,
+      }
+    },
 
+    methods: {
+      // Todo: 만들 예정
+      searchTodo () {
+        console.log(this.searchKey);
+        this.searchKey = null;
+        
+      },
+      
+      sendShowData () {
+        console.log("Event Bus를 통해 보냅니다!")
+        this.show = !this.show;
+        EventBus.$emit('sendShowData', this.show);
+      }
     }
-  },
-
-  methods: {
     
   }
-  
-}
 </script>
 
 <style scoped>
