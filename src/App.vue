@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <img src="./assets/vuejs.png" style="width: 700px; height: 300px;">
+    <TodoNavbar></TodoNavbar>
     <router-view/> <!-- router view에서 view를 가져온다-->
 
   </div>
 </template>
 
 <script>
-export default {
-  name: 'App',
-  mounted () {
-    console.log(this.$firebase);
+  import TodoNavbar from './components/todo/TodoNavbar.vue'
+  export default {
+    name: 'App',
+    components: {
+      'TodoNavbar': TodoNavbar,
+    }
   }
-}
 </script>
 
 <style>
@@ -20,9 +21,11 @@ export default {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
+    width: 100%;
+    height: 100%;
+    // text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    // margin-top: 60px;
   }
 
   .todo-container {
