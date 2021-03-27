@@ -45,7 +45,7 @@
         startDate:    null,
         endDate:      null,
         currentDate:  this.getCurrentDate(),
-        previousDate: this.getpreviousDate(),
+        previousDate: this.getPreviousDate(),
       }
     },
   
@@ -71,6 +71,7 @@
       checkEmptyContent(content) {
         const checkContent = content == "" || content == null || content == undefined || 
              ( content != null && typeof content == "object" && !Object.keys(content).length );
+        
         return checkContent;
       },
 
@@ -79,6 +80,7 @@
              ( dateTime != null && typeof dateTime == "object" && !Object.keys(dateTime).length );
         
         if (checkDate) return this.getCurrentDate();
+        
         return dateTime;
       },
 
@@ -88,7 +90,7 @@
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
       },
 
-      getpreviousDate() {
+      getPreviousDate() {
         const date  = new Date();
         const month = date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth();
         
