@@ -8,17 +8,25 @@
           v-model="content"
           v-on:keyup.enter="createTodo()"
         >
-        <datepicker 
-          v-model="endDate"
-          id="input-datepicker"
-          placeholder="오늘"
-          clear-button-icon="fas fa-dollar-sign"
-        >
-        </datepicker>
+        <div class="d-flex justify-content-between">
+          <datepicker 
+            v-model="endDate"
+            id="input-datepicker"
+            placeholder="오늘"
+            clear-button-icon="fas fa-dollar-sign"
+            format="yyyy-MM-dd"
+            :disabledDates="disabledDates"
+          >
+          </datepicker>
+          <div class="input-function-box">
+            <i class="fas fa-tag"></i>
+            <i class="fas fa-flag"></i>
+          </div>
+        </div>
       </div>
 
       <div class="d-grid gap-2">
-        <button class="btn btn-success" type="button" @click="createTodo()">추가</button>
+        <button class="todo-success-btn" type="button" @click="createTodo()">추가</button>
       </div>
     </div>
   </div>
@@ -28,6 +36,7 @@
   import Datepicker from 'vuejs-datepicker';
 
   export default {
+
     props: {
       todoIndices: Array,
     },
@@ -46,6 +55,9 @@
         endDate:      null,
         currentDate:  this.getCurrentDate(),
         previousDate: this.getPreviousDate(),
+        disabledDates: {
+          to: new Date(Date.now() - 8640000)
+        },
       }
     },
   
@@ -104,15 +116,12 @@
           endDate: endDate,
         };
       },
-
-      setMinAttribute () {
-        document.getElementById('end-date-input').setAttribute('min', this.previousDate);
-      }
     },
 
     mounted() {
       console.log("good");
-      document.getElementById('input-datepicker').style="width: 62px; height: 28px; margin-left: 15px; border-radius: 5px";
+      document.getElementById('input-datepicker').style="width: 100px; height: 28px; margin-left: 15px; border-radius: 5px";
+      document.getElementById('input-datepicker').val
     },
   }
 </script>
@@ -148,5 +157,27 @@
 
   .content-input:focus {
     outline:none;
-  }  
+  }
+
+  #input-datepicker::placeholder {
+    color: white;
+    font-size: 0.825rem;
+    margin-left: 5px;
+  }
+
+  .input-function-box {
+    margin-right: 15px;
+  }
+
+  .todo-success-btn {
+    background: #DB4C3F;
+    color: white;
+    border: 1px solid #DB4C3F;
+    border-radius: 7px;
+    width: 90px;
+    height: 30px;
+    font-weight: 900;
+    margin-left: 10px;
+    font-size: 0.8rem;
+  }
 </style>
