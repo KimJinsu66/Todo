@@ -3,46 +3,61 @@
     <div class="d-flex w-100 h-100">
       <TodoSideBar></TodoSideBar>
       <div class="todo-main">
+        
+        <!-- TODO: 부분 template로 수정 예정-->
+        <div class="date-header d-flex mt-5">
+          <div class="date-box d-flex">
+            <h5><strong>기한이 지난</strong></h5>
+          </div>
+
+          <!-- TODO: 구현 예정 -->
+          <div class="sort-box"></div>
+        </div>
+
+        <TodoList v-bind:todoItems="outOfDateTodos" v-on:deleteTodoData="deleteTodoData"></TodoList>
+        
+        
         <div class="date-header d-flex mt-5">
           <div class="date-box d-flex">
             <h5><strong>오늘</strong></h5>
             <small v-bind:style="{fontWeight: 400, marginLeft: '6px', paddingTop: '3px'}">{{ currentDate }}</small>
           </div>
 
-          <!-- 구현 예정 -->
+          <!-- TODO: 구현 예정 -->
           <div class="sort-box"></div>
         </div>
         
         <TodoList v-bind:todoItems="todos" v-on:deleteTodoData="deleteTodoData"></TodoList>
-        <TodoHeader v-on:createTodo="createTodo"></TodoHeader>
+        <TodoInput v-on:createTodo="createTodo"></TodoInput>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import TodoHeader  from './TodoHeader.vue'
+  import TodoInput  from './TodoInput.vue'
   import TodoList    from './TodoList.vue'
   import TodoSideBar from './TodoSideBar.vue'
   
   export default {
     data() {
       return {
-        index:     null,
-        content:   null,
-        createdAt: null,
-        updatedAt: null,
-        startDate: null,
-        endDate:   null,
-        todos:       [],
-        todoIndices: [],
+        index:        null,
+        content:      null,
+        createdAt:    null,
+        updatedAt:    null,
+        startDate:    null,
+        endDate:      null,
+        todos:          [],
+        todoIndices:    [],
+        outOfDateTodos: [],
         todoList:    this.$firebase.firestore(),
         currentDate: this.getCurrentDate(),
       }
     },
 
     components: {
-      'TodoHeader':  TodoHeader,
+      'TodoInput':  TodoInput,
       'TodoList':    TodoList,
       'TodoSideBar': TodoSideBar,
     },
@@ -63,9 +78,16 @@
           this.todoIndices.push(doc.data().index);
         });
       });
+      this.extractOutOfDateTodos(this.todos);
     },
     
     methods: {
+      extractOutOfDateTodos (todos) {
+        const currentDate = new Date(this.currentDate);
+        this.outOfDateTodos = todos.filter( todo => new Date(todo.endDate) < currentDate );
+        this.todos = todos.filter( todo => new Date(todo.endDate) >= currentDate );
+      },
+
       async createTodo (todoItems) {
         console.log("Todo Index Created in");
         
@@ -108,7 +130,7 @@
       },
 
       deleteTodoData (arrayIndex, todoIndex) {
-        this.todos.splice(arrayIndex, 1);
+        this.outOfDateTodos.splice(arrayIndex, 1);
         this.todoList.collection("todo_list").where("index", "==", todoIndex)
           .get()
           .then((querySnapshot) => {
