@@ -6,7 +6,10 @@
         
         <!-- TODO: 부분 template로 수정 예정-->
         <div class="date-header d-flex mt-5">
-          <div class="date-box d-flex">
+          <div 
+            class="date-box d-flex"
+            v-if="outOfDateTodos.length != 0"
+          >
             <h5><strong>기한이 지난</strong></h5>
           </div>
 
@@ -78,6 +81,7 @@
           this.todoIndices.push(doc.data().index);
         });
       });
+      
       this.extractOutOfDateTodos(this.todos);
     },
     
@@ -129,8 +133,18 @@
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
       },
 
-      deleteTodoData (arrayIndex, todoIndex) {
-        this.outOfDateTodos.splice(arrayIndex, 1);
+      isTodosData (todoEndDate) {
+        const currentDate = new Date(this.currentDate);
+        return new Date(todoEndDate) < currentDate ;
+      },
+
+      deleteTodoData (arrayIndex, todoIndex, todoEndDate) {
+        console.log(this.isTodosArray(todoEndDate));
+        this.isTodosArray(todoEndDate) ? this.todos.splice(arrayIndex, 1) : this.outOfDateTodos.splice(arrayIndex, 1);
+        this.deleteFirbaseData(todoIndex);      
+      },
+
+      deleteFirbaseData (todoIndex) {
         this.todoList.collection("todo_list").where("index", "==", todoIndex)
           .get()
           .then((querySnapshot) => {
@@ -142,6 +156,8 @@
             console.error("Errorr removing document:", error);
           });
       },
+
+      
     },
 
     // mounted는 Vue Component가 페이지에 끼워지고(mounted) 나서 호출되는 함수 이다.
