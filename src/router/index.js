@@ -8,6 +8,8 @@ import EditEmployee from '@/components/Employee/EditEmployee'
 
 import TodoShow from '@/components/todo/TodoShow'
 import TodoIndex from '@/components/todo/TodoIndex'
+import TodoUpcoming from '@/components/todo/TodoUpcoming'
+import TodoProject from '@/components/todo/TodoProject'
 
 Vue.use(Router)
 
@@ -23,7 +25,16 @@ export default new Router({
             name: "Todo",
             component: TodoIndex
         },
-
+        {
+            path: '/upcoming',
+            name: "todo-upcoming",
+            component: TodoUpcoming
+        },
+        {
+            path: '/project',
+            name: "todo-project",
+            component: TodoProject
+        },
         {
             path: '/:todo_id',
             name: 'todo-show',
