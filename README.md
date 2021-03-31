@@ -6,10 +6,6 @@
 
 시작일 : 2021 03.19 ~ 
 
-Vuejs를 이용한 TODO 리스트 연습 페이지 입니다.
+기술 스택 : vuejs + bootstrap + firebase을 이용하여 구현하고 있습니다.
 
-### update
-
-first commit(2021.03.21)
-
-- 초기 설정 파일 커밋
+설명 : Todoist 사이트를 클론 코딩하고 있는 중입니다. 
