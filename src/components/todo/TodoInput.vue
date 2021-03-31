@@ -1,33 +1,31 @@
 <template>
-  <div class="">
-    <div class="my-5">
-      <div class="todo-input-box mb-3">
-        <input type="text" 
-          class="content-input p-3"
-          placeholder="할일을 입력하세요"
-          v-model="content"
-          v-on:keyup.enter="createTodo()"
+  <div class="my-5">
+    <div class="todo-input-box mb-3">
+      <input type="text" 
+        class="content-input p-3"
+        placeholder="할일을 입력하세요"
+        v-model="content"
+        v-on:keyup.enter="createTodo()"
+      >
+      <div class="d-flex justify-content-between">
+        <datepicker 
+          v-model="endDate"
+          id="input-datepicker"
+          placeholder="오늘"
+          clear-button-icon="fas fa-dollar-sign"
+          format="yyyy-MM-dd"
+          :disabledDates="disabledDates"
         >
-        <div class="d-flex justify-content-between">
-          <datepicker 
-            v-model="endDate"
-            id="input-datepicker"
-            placeholder="오늘"
-            clear-button-icon="fas fa-dollar-sign"
-            format="yyyy-MM-dd"
-            :disabledDates="disabledDates"
-          >
-          </datepicker>
-          <div class="input-function-box">
-            <i class="fas fa-tag"></i>
-            <i class="fas fa-flag"></i>
-          </div>
+        </datepicker>
+        <div class="input-function-box">
+          <i class="fas fa-tag"></i>
+          <i class="fas fa-flag"></i>
         </div>
       </div>
+    </div>
 
-      <div class="d-grid gap-2">
-        <button class="todo-success-btn" type="button" @click="createTodo()">추가</button>
-      </div>
+    <div class="d-grid gap-2">
+      <button class="todo-success-btn" type="button" @click="createTodo()">추가</button>
     </div>
   </div>
 </template>
@@ -60,9 +58,8 @@
         },
       }
     },
-  
+
     methods: {
-      
       async createTodo () {
         console.log(this.endDate);
 
@@ -78,8 +75,8 @@
       },
 
       initializeInput () {
-        this.content   = null;
-        this.endDate   = null;
+        this.content = null;
+        this.endDate = null;
       },
 
       checkEmptyContent(content) {
@@ -94,7 +91,10 @@
         
         if (checkDate) return this.getCurrentDate();
         
-        return `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()}`;
+        const month = ("0" + (1 + dateTime.getMonth())).slice(-2);
+        const day   = ("0" + dateTime.getDate()).slice(-2);
+        
+        return `${ dateTime.getFullYear() }-${ month }-${ day }`;
       },
 
       getCurrentDate() {
@@ -119,9 +119,7 @@
     },
 
     mounted() {
-      console.log("good");
       document.getElementById('input-datepicker').style="width: 100px; height: 28px; margin-left: 15px; border-radius: 5px";
-      document.getElementById('input-datepicker').val
     },
   }
 </script>
