@@ -1,47 +1,33 @@
 <template>
   <div>
-    <div class="d-flex w-100 h-100">
-      <TodoSideBar></TodoSideBar>
-      <div class="todo-main">
-        
-        <!-- TODO: 부분 template로 수정 예정-->
-        <div class="date-header d-flex mt-5">
-          <div 
-            class="date-box d-flex"
-            v-if="outOfDateTodos.length != 0"
-          >
-            <h5><strong>기한이 지난</strong></h5>
-          </div>
-
-          <!-- TODO: 구현 예정 -->
-          <div class="sort-box"></div>
-        </div>
-
-        <TodoList v-bind:todoItems="outOfDateTodos" v-on:deleteTodoData="deleteTodoData"></TodoList>
-        
-        
-        <div class="date-header d-flex mt-5">
-          <div class="date-box d-flex">
-            <h5><strong>오늘</strong></h5>
-            <small v-bind:style="{fontWeight: 400, marginLeft: '6px', paddingTop: '3px'}">{{ currentDate }}</small>
-          </div>
-
-          <!-- TODO: 구현 예정 -->
-          <div class="sort-box"></div>
-        </div>
-        
-        <TodoList v-bind:todoItems="todos" v-on:deleteTodoData="deleteTodoData"></TodoList>
-        <TodoInput v-on:createTodo="createTodo"></TodoInput>
+    <div class="date-header d-flex mt-5">
+      <div class="date-box d-flex" v-if="outOfDateTodos.length != 0">
+        <h5><strong>기한이 지난</strong></h5>
       </div>
+      <div class="sort-box"></div>
     </div>
+    <TodoList v-bind:todoItems="outOfDateTodos" v-on:deleteTodoData="deleteTodoData"></TodoList>
+    
+    <div class="date-header d-flex mt-5">
+      <div class="date-box d-flex">
+        <h5><strong>오늘</strong></h5>
+        <small v-bind:style="{fontWeight: 400, marginLeft: '6px', paddingTop: '3px'}">
+          {{ currentDate }}
+        </small>
+      </div>
+      <div class="sort-box"></div>
+    </div>
+    
+    <TodoList v-bind:todoItems="todos" v-on:deleteTodoData="deleteTodoData"></TodoList>
+    <TodoInput v-on:createTodo="createTodo"></TodoInput>
   </div>
 </template>
 
 <script>
-  import TodoInput  from './TodoInput.vue'
+  import TodoInput   from './TodoInput.vue'
   import TodoList    from './TodoList.vue'
-  import TodoSideBar from './TodoSideBar.vue'
-  
+  import EventBus    from '../common/eventBus.js'
+
   export default {
     data() {
       return {
@@ -60,13 +46,13 @@
     },
 
     components: {
-      'TodoInput':  TodoInput,
-      'TodoList':    TodoList,
-      'TodoSideBar': TodoSideBar,
+      'TodoInput': TodoInput,
+      'TodoList':  TodoList,
     },
 
     async created () {
-      await this.todoList.collection('todo_list').get().then((querySnapshot) => {
+      console.log(this.todoList);
+      await this.todoList.collection('todo_list').orderBy("endDate").get().then((querySnapshot) => {
         
         querySnapshot.forEach((doc) => {
           const data = {
@@ -74,7 +60,7 @@
             'index':      doc.data().index,
             'content':    doc.data().content,
             'createdAt':  doc.data().createdAt,
-            'endDate':    doc.data().endDate
+            'endDate':    doc.data().endDate,
           }
 
           this.todos.push(data);
@@ -88,8 +74,8 @@
     methods: {
       extractOutOfDateTodos (todos) {
         const currentDate = new Date(this.currentDate);
-        this.outOfDateTodos = todos.filter( todo => new Date(todo.endDate) < currentDate );
-        this.todos = todos.filter( todo => new Date(todo.endDate) >= currentDate );
+        this.outOfDateTodos = todos.filter( todo => new Date(todo.endDate) < currentDate  );
+        this.todos          = todos.filter( todo => new Date(todo.endDate) >= currentDate );
       },
 
       async createTodo (todoItems) {
@@ -130,21 +116,23 @@
 
       getCurrentDate () {
         const date = new Date();
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        let day = date.getDate();
+        console.log(("00"+day.toString()).slice(-2));
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${("00"+day.toString()).slice(-2)}`;
       },
 
       isTodosData (todoEndDate) {
         const currentDate = new Date(this.currentDate);
+        console.log(currentDate);
         return new Date(todoEndDate) < currentDate ;
       },
 
       deleteTodoData (arrayIndex, todoIndex, todoEndDate) {
-        console.log(this.isTodosArray(todoEndDate));
-        this.isTodosArray(todoEndDate) ? this.todos.splice(arrayIndex, 1) : this.outOfDateTodos.splice(arrayIndex, 1);
-        this.deleteFirbaseData(todoIndex);      
+        this.isTodosData(todoEndDate) ? this.outOfDateTodos.splice(arrayIndex, 1) : this.todos.splice(arrayIndex, 1) ; 
+        this.deleteFirebaseData(todoIndex);      
       },
 
-      deleteFirbaseData (todoIndex) {
+      deleteFirebaseData (todoIndex) {
         this.todoList.collection("todo_list").where("index", "==", todoIndex)
           .get()
           .then((querySnapshot) => {
@@ -156,8 +144,6 @@
             console.error("Errorr removing document:", error);
           });
       },
-
-      
     },
 
     // mounted는 Vue Component가 페이지에 끼워지고(mounted) 나서 호출되는 함수 이다.
@@ -168,14 +154,4 @@
 </script>
 
 <style scoped>
-  .todo-container {
-    margin: 0 auto;
-    width: 700px;
-  }
-  .todo-main {
-    // margin-left: 300px;
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-  }
 </style>
