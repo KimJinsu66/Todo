@@ -1,37 +1,41 @@
 <template>
   <transition-group name="list" tag="div">
-    <div class="todo-list-container border mb-3 p-2" v-for="(todo, index) in todoItems" :key="index">
+    <div 
+      class="todo-box border-bottom mb-2 p-2" 
+      v-for="(todo, index) in todoItems" 
+      :key="index"
+    >
       <div class="d-flex flex-row-reverse bd-highlight mr-2">
       
         <span class="p-1 bd-highlight" type="button" @click="successTodo(todo, index, todo.index)">
           <i class="far fa-check-circle fa-lg" aria-hidden="true"></i>
         </span>
 
-        <span class="p-1 bd-highlight" type="button" @click="deleteTodo(index, todo.index)">
+        <span class="p-1 bd-highlight" type="button" @click="deleteTodo(index, todo.index, todo.endDate)">
           <i class="far fa-trash-alt fa-lg" aria-hidden="true"></i>
         </span>
 
         <span class="p-1 bd-highlight" type="button">
           <router-link
               v-bind:to="{ name: 'todo-show', params: { todo_id: todo.index } }">
-            <i class="fas fa-info-circle fa-lg mr-2" aria-hidden="true"></i>
+            <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>
           </router-link>
         </span>
 
       </div>
 
-      <div class="d-flex">
-        <div class="p-2 todo-icon-box">
-          <i class="fas fa-clipboard-list fa-2x"></i>
+      <div class="row">
+        <div class="col-md-1 pt-1 todo-icon-box text-center">
+          <i class="fas fa-clipboard-list fa-lg"></i>
         </div>
         
-        <div>
-          <div class="p-1 fs-4">
-            <p>{{todo.content}}</p>
+        <div class="col-md-11 text-left d-flex justify-content-between ">
+          <div class="fs-5 pt-1">
+            {{todo.content}}
           </div>
           
-          <div class="p-1 fs-6">
-            {{ todo.startDate }} ~ {{ todo.endDate }}
+          <div class="date-box fs-6">
+            <em>{{ todo.startDate }} ~ {{ todo.endDate }}</em>
           </div>
         </div>
 
@@ -42,17 +46,18 @@
 
 <script>
   export default {
-    props: ['todoItems'],
+    props: ['todoItems',],
+    
     data() {
       return {
-
+        
       }
     },
     
     methods: {
       successTodo (removeTodo, arrayIndex, todoIndex) {
         this.insertFinishTodoData(removeTodo);
-        this.deleteTodoData(arrayIndex, todoIndex);
+        this.deleteTodoData(arrayIndex, todoIndex, removeTodo.endDate);
       },
 
       insertFinishTodoData (removeTodo) {
@@ -61,25 +66,37 @@
         this.$firebase.firestore().collection("finishTodo").doc(doc).set({
           content:   removeTodo.content,
           createdAt: removeTodo.createdAt,
-          startDate: removeTodo.startDate,
+          startDate: removeTodo.createdAt,
           endDate:   removeTodo.endDate
         });
       },
 
-      deleteTodo (arrayIndex, todoIndex) {
+      deleteTodo (arrayIndex, todoIndex, todoEndDate) {
         if(confirm('Are you sure?')) {
-          this.deleteTodoData(arrayIndex, todoIndex);
+          this.deleteTodoData(arrayIndex, todoIndex, todoEndDate);
         }
       },
 
-      deleteTodoData (arrayIndex, todoIndex) {
-        this.$emit('deleteTodoData', arrayIndex, todoIndex);
+      deleteTodoData (arrayIndex, todoIndex, todoEndDate) {
+        this.$emit('deleteTodoData', arrayIndex, todoIndex, todoEndDate);
       },
     },
   }
 </script>
 
-<style scope>
+<style scoped>
+  a {
+    color: black !important;
+  }
+  
+  .todo-list-container {
+    border-radius:
+  }
+
+  .date-box {
+    padding: 15px 8px 0 0;
+  }
+
   .todo-icon-box {
     padding-left: 24px;
   }
