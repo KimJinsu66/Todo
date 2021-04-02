@@ -11,7 +11,7 @@
             <i class="fas fa-home svg-font"></i>
           </router-link>
         </button>
-        <div class="total-search-input-box" @click="clickSearchInput()" @mouseover="changeInputBox">
+        <div class="total-search-input-box" @click="clickSearchInput()">
           <i class="fas fa-search total-search-icon"></i>
           <input id="id-ash5pn" 
             role="combobox"
@@ -24,7 +24,6 @@
             placeholder="검색" 
             aria-label="빠른 검색" 
             aria-keyshortcuts="f" 
-            value=""
             v-model="searchKey"
             v-on:keyup.enter="searchTodo()">
         </div>
